@@ -1,37 +1,46 @@
-# Staker Smart Contract
+# NFT Staking Contract
 
-This repository contains a Solidity smart contract called `Staker`. The `Staker` contract allows users to stake Ether and trigger an external contract's function once a specified threshold is reached. The contract also includes a deadline, after which users can withdraw their stake if the threshold has not been met.
+This is a smart contract for staking NFTs and earning ERC20 tokens as rewards.
 
 ## Features
 
-- Stake Ether and track individual balances
-- Set a threshold and deadline for triggering the external contract
-- Execute the external contract's function if the deadline has passed and the threshold is met
-- Withdraw the user's balance if the deadline has passed and the threshold has not been met
-- Calculate the time left before the deadline
+- Stake NFTs and earn ERC20 token rewards.
+- Events for staking, unstaking, and claiming rewards.
+- Built with OpenZeppelin libraries for ERC721 and ERC20 token standards.
+
+## Installation
+
+1. Install npm dependencies:
+
+```bash
+npm install @openzeppelin/contracts
 
 ## Usage
 
-1. Deploy the `ExampleExternalContract` and note its address.
-2. Deploy the `Staker` contract, passing the address of the `ExampleExternalContract` as a constructor argument.
-3. Users can stake Ether by calling the `stake()` function or sending Ether directly to the contract.
-4. After the deadline has passed, if the threshold is met, anyone can call the `execute()` function to trigger the external contract's function.
-5. If the deadline has passed and the threshold has not been met, users can call the `withdraw()` function to retrieve their staked Ether.
+1. Deploy the NftStaking contract with the following constructor parameters:
 
-## Example
+_token: The address of the ERC20 token contract.
+_nft: The address of the ERC721 NFT contract.
+_rewardRate: The reward rate per day (in ERC20 tokens).
+_startTime: The start time of the staking period (in days since Unix epoch).
+_endTime: The end time of the staking period (in days since Unix epoch).
+Stake NFTs using the stake(uint256 _amount) function:
 
-```solidity
-// Deploy the ExampleExternalContract
-ExampleExternalContract exampleExternalContract = new ExampleExternalContract();
+_amount: The number of NFTs to stake.
+Unstake NFTs using the unstake(uint256 _amount) function:
 
-// Deploy the Staker contract with the address of the ExampleExternalContract
-Staker staker = new Staker(address(exampleExternalContract));
+_amount: The number of NFTs to unstake.
+Claim earned rewards using the claimRewards() function.
 
-// Stake Ether
-staker.stake{value: 1 ether}();
+Events
+Staked(address indexed user, uint256 amount): Emitted when a user stakes NFTs.
+Unstaked(address indexed user, uint256 amount): Emitted when a user unstakes NFTs.
+ClaimedReward(address indexed user, uint256 reward): Emitted when a user claims their rewards.
+Requirements
+Users must own the specified NFT to stake it.
+Staking and unstaking amounts must be greater than 0.
+Contract Code
+The contract code can be found here.
 
-// Execute the external contract's function after the deadline and if the threshold is met
-staker.execute();
-
-// Withdraw Ether if the deadline has passed and the threshold has not been met
-staker.withdraw();
+License
+This project is licensed under the MIT License.
