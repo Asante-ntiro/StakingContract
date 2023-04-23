@@ -1,32 +1,37 @@
-# StakingContract
-This is an NFT Staking Smart Contract
+# Staker Smart Contract
 
-This smart contract allows users to stake an ERC721 token in exchange for rewards, which are calculated based on the amount of time they have staked and the reward rate set by the contract owner. Users can also stake their NFT to participate in the staking process. Once the staking period is over, users can claim their rewards and unstake their tokens.
+This repository contains a Solidity smart contract called `Staker`. The `Staker` contract allows users to stake Ether and trigger an external contract's function once a specified threshold is reached. The contract also includes a deadline, after which users can withdraw their stake if the threshold has not been met.
 
-## Requirements
-Solidity compiler version 0.8.0
-OpenZeppelin ERC721 and ERC20 contracts
+## Features
+
+- Stake Ether and track individual balances
+- Set a threshold and deadline for triggering the external contract
+- Execute the external contract's function if the deadline has passed and the threshold is met
+- Withdraw the user's balance if the deadline has passed and the threshold has not been met
+- Calculate the time left before the deadline
+
 ## Usage
-Deploy the contract, passing in the following parameters:
 
-_token: the address of the ERC20 token contract to be staked
-_nft: the address of the ERC721 NFT contract to be staked
-_rewardRate: the reward rate (in wei per second) set by the contract owner
-_startTime: the start time of the staking period (in days from contract deployment)
-_endTime: the end time of the staking period (in days from contract deployment)
-Users can then stake their ERC721 tokens by calling the stake function, passing in the amount of tokens they want to stake (in wei).
+1. Deploy the `ExampleExternalContract` and note its address.
+2. Deploy the `Staker` contract, passing the address of the `ExampleExternalContract` as a constructor argument.
+3. Users can stake Ether by calling the `stake()` function or sending Ether directly to the contract.
+4. After the deadline has passed, if the threshold is met, anyone can call the `execute()` function to trigger the external contract's function.
+5. If the deadline has passed and the threshold has not been met, users can call the `withdraw()` function to retrieve their staked Ether.
 
-Users can also stake their NFT by calling the stake function after making sure they own the NFT first.
+## Example
 
-Once the staking period is over, users can claim their rewards by calling the claimReward function. The rewards will be transferred to their wallet along with the staked ERC721 tokens.
+```solidity
+// Deploy the ExampleExternalContract
+ExampleExternalContract exampleExternalContract = new ExampleExternalContract();
 
-Users can also unstake their ERC721 tokens by calling the unstake function, passing in the amount of tokens they want to unstake (in wei).
+// Deploy the Staker contract with the address of the ExampleExternalContract
+Staker staker = new Staker(address(exampleExternalContract));
 
-## Events
-The contract emits the following events:
+// Stake Ether
+staker.stake{value: 1 ether}();
 
-Staked: when a user has staked tokens or NFT
-Unstaked: when a user has unstaked tokens
-ClaimedReward: when a user has claimed their rewards
-## License
-This smart contract is licensed under the MIT License.
+// Execute the external contract's function after the deadline and if the threshold is met
+staker.execute();
+
+// Withdraw Ether if the deadline has passed and the threshold has not been met
+staker.withdraw();
